@@ -1,8 +1,13 @@
 package com.demo.butler_voice_app.voice
 
+import android.content.Context
+import android.media.MediaPlayer
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 
 class ElevenLabsTTS(
     private val apiKey: String,
@@ -13,7 +18,7 @@ class ElevenLabsTTS(
 
     fun speak(text: String, onDone: () -> Unit) {
 
-        val url = "https://api.elevenlabs.io/v1/text-to-speech/YOUR_VOICE_ID"
+        val url = "https://api.elevenlabs.io/v1/text-to-speech/LcfcDJNUP1GQjkzn1xUU"
 
         val json = """
         {
@@ -22,29 +27,40 @@ class ElevenLabsTTS(
         }
         """.trimIndent()
 
+        val body = json.toRequestBody("application/json".toMediaTypeOrNull())
+
         val request = Request.Builder()
             .url(url)
-            .post(RequestBody.create("application/json".toMediaTypeOrNull(), json))
+            .post(body)
             .addHeader("xi-api-key", apiKey)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
 
-            override fun onFailure(call: Call, e: IOException) {}
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
 
             override fun onResponse(call: Call, response: Response) {
 
+                val audioBytes = response.body?.bytes()
+
+                if (audioBytes == null) {
+                    return
+                }
+
                 val file = File(context.cacheDir, "tts.mp3")
                 val fos = FileOutputStream(file)
-                fos.write(response.body!!.bytes())
+                fos.write(audioBytes)
                 fos.close()
 
-                val player = android.media.MediaPlayer()
+                val player = MediaPlayer()
                 player.setDataSource(file.absolutePath)
                 player.prepare()
                 player.start()
 
                 player.setOnCompletionListener {
+                    player.release()
                     onDone()
                 }
             }
