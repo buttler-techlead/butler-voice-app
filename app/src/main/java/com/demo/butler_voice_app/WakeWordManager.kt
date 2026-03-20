@@ -10,7 +10,7 @@ class WakeWordManager(
 
     private val porcupineManager = PorcupineManager.Builder()
         .setAccessKey("EX1Uf3pS1ekA7wReSzb3BaOCHyXmFdGg4ZHCMwRMceqUbsnAD31btw==")
-        .setKeyword(Porcupine.BuiltInKeyword.BUTLER)
+        .setKeyword(Porcupine.BuiltInKeyword.PORCUPINE) // ✅ FIXED
         .build(context) { _ ->
             onWake()
         }

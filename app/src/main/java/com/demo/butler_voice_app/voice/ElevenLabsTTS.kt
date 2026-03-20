@@ -18,7 +18,8 @@ class ElevenLabsTTS(
 
     fun speak(text: String, onDone: () -> Unit) {
 
-        val url = "https://api.elevenlabs.io/v1/text-to-speech/LcfcDJNUP1GQjkzn1xUU"
+        val url = "https://api.elevenlabs.io/v1/text-to-speech/ofrWpMk0j8f9Ni9zjk7C" +
+                "Model : eleven_turbo_v2_5"
 
         val json = """
         {
